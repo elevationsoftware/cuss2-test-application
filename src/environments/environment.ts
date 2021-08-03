@@ -3,7 +3,14 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+
+  cuss2Config: {
+    cussUrl: 'https://cuss2.herokuapp.com',
+    oauthUrl: 'https://cuss2.herokuapp.com',
+    clientId: 'F9',
+    clientSecret: 'edeb4e2e-d334-4f33-839c-f5278a1cf2e6'
+  }
 };
 
 /*
