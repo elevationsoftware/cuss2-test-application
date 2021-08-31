@@ -300,9 +300,37 @@
   state: {{ cuss2?.state || 'UNKNOWN' }}
 
   <label>Online:
-    <input type="checkbox" ng-model="cuss2.applicationOnline">
+    <input type="checkbox" [(ngModel)]="online"
+           [ngModelOptions]="{standalone: true}">
   </label>
-  <button (click)="exit()">Exit</button>
+
+  <table>
+    <tr *ngFor="let component of components">
+      <td>{{ component.id }}</td>
+      <td>{{ component.eventHandlingCode === 'UNAVAILABLE' ? '🚨' : '✅' }}</td>
+      <td>{{ component.constructor.name }}</td>
+      <td>{{ component.status }}</td>
+      <td>{{ component.eventHandlingCode }}</td>
+    </tr>
+  </table>
+
+
+  <button (click)="exit()" disabled="{{ canExit() ? '' : 'disabled' }}">Exit</button>
+  <button (click)="cuss2?.api?.getComponents()">Query Components</button>
+  <button (click)="cuss2?.requestReload()">Request Reload</button>
+  <button (click)="cuss2?.requestActiveState()" [disabled]="!cuss2 || cuss2.state !== 'AVAILABLE'" >Request Active</button>
+
+  <table *ngIf="!!cuss2">
+    <tr><td>cussInterfaceVersions</td><td>{{ cuss2.environment.cussInterfaceVersions }}</td></tr>
+    <tr><td>cussVersions</td><td>{{ cuss2.environment.cussVersions }}</td></tr>
+    <tr><td>deviceID</td><td>{{ cuss2.environment.deviceID }}</td></tr>
+    <tr><td>initTimeout</td><td>{{ cuss2.environment.initTimeout }}</td></tr>
+    <tr><td>killTimeout</td><td>{{ cuss2.environment.killTimeout }}</td></tr>
+    <tr><td>osName</td><td>{{ cuss2.environment.osName }}</td></tr>
+    <tr><td>osVersion</td><td>{{ cuss2.environment.osVersion }}</td></tr>
+    <tr><td>sessionTimeout</td><td>{{ cuss2.environment.sessionTimeout }}</td></tr>
+  </table>
+
 </div>
 
 <router-outlet></router-outlet>

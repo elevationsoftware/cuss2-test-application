@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 
 import { environment } from '../environments/environment';
 import { Cuss2Module, ICuss2ServiceOptions } from '@elevated-libs/cuss2-angular';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { Cuss2Module, ICuss2ServiceOptions } from '@elevated-libs/cuss2-angular'
   imports: [
     BrowserModule,
     AppRoutingModule,
-    Cuss2Module.forRoot(environment.cuss2Config as ICuss2ServiceOptions)
+    Cuss2Module.forRoot(environment.cuss2Config as ICuss2ServiceOptions),
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
