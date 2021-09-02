@@ -316,7 +316,7 @@
 
 
   <button (click)="exit()" disabled="{{ canExit() ? '' : 'disabled' }}">Exit</button>
-  <button (click)="cuss2?.api?.getComponents()">Query Components</button>
+  <button (click)="cuss2?.queryComponents()">Query Components</button>
   <button (click)="cuss2?.requestReload()">Request Reload</button>
   <button (click)="cuss2?.requestActiveState()" [disabled]="!cuss2 || cuss2.state !== 'AVAILABLE'" >Request Active</button>
 
