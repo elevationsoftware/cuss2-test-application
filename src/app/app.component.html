@@ -17,51 +17,59 @@
 </style>
 
 <div class="content" role="main">
-  <h1>Angular Airlines</h1>
-  state: {{ cuss2?.state || 'UNKNOWN' }}
+  <h1 style="display:inline">Angular Airlines</h1>
+  <span> - {{ cuss2?.state || 'UNKNOWN' }}</span>
 
-  <label>Online:
-    <input type="checkbox" [(ngModel)]="online"
-           [ngModelOptions]="{standalone: true}">
-  </label>
+  <section *ngIf="connectionStatus">
+    {{ connectionStatus }}
+  </section>
 
-  <table>
-    <tr *ngFor="let component of components">
-      <td>{{ component.id }}</td>
-      <td>{{ component.eventHandlingCode === 'UNAVAILABLE' ? '🚨' : '✅' }}</td>
-      <td>{{ component.constructor.name }}</td>
-      <td>{{ component.status }}</td>
-      <td>{{ component.eventHandlingCode }}</td>
-      <td><button (click)="component.enable()">Enable</button></td>
-    </tr>
-  </table>
+  <section *ngIf="!connectionStatus">
+
+    <label>Online:
+      <input type="checkbox" [(ngModel)]="online"
+             [ngModelOptions]="{standalone: true}">
+    </label>
+
+    <table>
+      <tr *ngFor="let component of components">
+        <td>{{ component.id }}</td>
+        <td>{{ component.eventHandlingCode === 'UNAVAILABLE' ? '🚨' : '✅' }}</td>
+        <td>{{ component.constructor.name }}</td>
+        <td>{{ component.status }}</td>
+        <td>{{ component.eventHandlingCode }}</td>
+        <td><button (click)="component.query()">Query</button></td>
+        <td><button (click)="component.enable()">Enable</button></td>
+      </tr>
+    </table>
 
 
-  <button (click)="exit()" disabled="{{ canExit() ? '' : 'disabled' }}">Exit</button>
-  <button (click)="cuss2?.queryComponents()">Query Components</button>
-  <button (click)="cuss2?.requestReload()">Request Reload</button>
-  <button (click)="cuss2?.requestActiveState()" [disabled]="!cuss2 || cuss2.state !== 'AVAILABLE'" >Request Active</button>
+    <button (click)="exit()" disabled="{{ canExit() ? '' : 'disabled' }}">Exit</button>
+    <button (click)="cuss2?.queryComponents()">Query Components</button>
+    <button (click)="cuss2?.requestReload()">Request Reload</button>
+    <button (click)="cuss2?.requestActiveState()" [disabled]="!cuss2 || cuss2.state !== 'AVAILABLE'" >Request Active</button>
 
-  <table *ngIf="!!cuss2">
-    <tr><td>cussInterfaceVersions</td><td>{{ cuss2.environment.cussInterfaceVersions }}</td></tr>
-    <tr><td>cussVersions</td><td>{{ cuss2.environment.cussVersions }}</td></tr>
-    <tr><td>deviceID</td><td>{{ cuss2.environment.deviceID }}</td></tr>
-    <tr><td>initTimeout</td><td>{{ cuss2.environment.initTimeout }}</td></tr>
-    <tr><td>killTimeout</td><td>{{ cuss2.environment.killTimeout }}</td></tr>
-    <tr><td>osName</td><td>{{ cuss2.environment.osName }}</td></tr>
-    <tr><td>osVersion</td><td>{{ cuss2.environment.osVersion }}</td></tr>
-    <tr><td>sessionTimeout</td><td>{{ cuss2.environment.sessionTimeout }}</td></tr>
-  </table>
+    <table *ngIf="!!cuss2">
+      <tr><td>cussInterfaceVersions</td><td>{{ cuss2.environment.cussInterfaceVersions }}</td></tr>
+      <tr><td>cussVersions</td><td>{{ cuss2.environment.cussVersions }}</td></tr>
+      <tr><td>deviceID</td><td>{{ cuss2.environment.deviceID }}</td></tr>
+      <tr><td>initTimeout</td><td>{{ cuss2.environment.initTimeout }}</td></tr>
+      <tr><td>killTimeout</td><td>{{ cuss2.environment.killTimeout }}</td></tr>
+      <tr><td>osName</td><td>{{ cuss2.environment.osName }}</td></tr>
+      <tr><td>osVersion</td><td>{{ cuss2.environment.osVersion }}</td></tr>
+      <tr><td>sessionTimeout</td><td>{{ cuss2.environment.sessionTimeout }}</td></tr>
+    </table>
 
-  <section id="boadringPass">
-    <h2>Boarding Pass</h2>
-    <details>
-      <label for="assets">Assets</label><br>
-      <textarea id="assets" [(ngModel)]="assets"></textarea><br>
-      <label for="coupon">Coupon</label><br>
-      <input id="coupon" type="text" [(ngModel)]="coupon" [ngModelOptions]="{standalone: true}"><br>
-    </details>
-    <button (click)="print()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
+    <section id="boadringPass">
+      <h2>Boarding Pass</h2>
+      <details>
+        <label for="assets">Assets</label><br>
+        <textarea id="assets" [(ngModel)]="assets"></textarea><br>
+        <label for="coupon">Coupon</label><br>
+        <input id="coupon" type="text" [(ngModel)]="coupon" [ngModelOptions]="{standalone: true}"><br>
+      </details>
+      <button (click)="print()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
+    </section>
   </section>
 
 </div>
