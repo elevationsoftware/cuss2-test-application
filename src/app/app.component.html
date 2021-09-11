@@ -7,13 +7,19 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  #boadringPass, #assets, #coupon {
+  #bpp, #btp, #assets, #coupon {
     width: 100%;
   }
   #assets {
     white-space: nowrap;
     height: 100px;
   }
+  /*dt,dd {*/
+  /*  display: inline-block;*/
+  /*}*/
+  /*dt {*/
+  /*  width: 50px;*/
+  /*}*/
 </style>
 
 <div class="content" role="main">
@@ -60,8 +66,16 @@
       <tr><td>sessionTimeout</td><td>{{ cuss2.environment.sessionTimeout }}</td></tr>
     </table>
 
-    <section id="boadringPass">
-      <h2>Boarding Pass</h2>
+    <section id="bpp">
+      <h2>Boarding Pass Printer</h2>
+      <dl>
+        <dt>Environment:</dt>
+        <dd *ngFor="let item of bpp.ES | keyvalue">{{item.key}}={{item.value}}</dd>
+        <dt>Logos Loaded:</dt>
+        <dd>{{bpp.LS || 'NONE'}}</dd>
+        <dt>Parametric Tables Loaded:</dt>
+        <dd>{{bpp.PS || 'NONE'}}</dd>
+      </dl>
       <details>
         <label for="assets">Assets</label><br>
         <textarea id="assets" [(ngModel)]="assets"></textarea><br>
@@ -69,6 +83,17 @@
         <input id="coupon" type="text" [(ngModel)]="coupon" [ngModelOptions]="{standalone: true}"><br>
       </details>
       <button (click)="print()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
+    </section>
+    <section id="btp">
+      <h2>Bag Tag Printer</h2>
+      <dl>
+        <dt>Environment: <a href="#" (click)="cuss2?.bagTagPrinter?.getEnvironment()">query</a></dt>
+        <dd *ngFor="let item of btp.ES | keyvalue">{{item.key}}={{item.value}}</dd>
+        <dt>Logos Loaded:</dt>
+        <dd>{{btp.LS || 'NONE'}}</dd>
+        <dt>Parametric Tables Loaded:</dt>
+        <dd>{{btp.PS || 'NONE'}}</dd>
+      </dl>
     </section>
   </section>
 
