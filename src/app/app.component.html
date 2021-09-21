@@ -7,10 +7,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  #bpp, #btp, #assets, #coupon {
+  .printer, .printer textarea, .printer input {
     width: 100%;
   }
-  #assets {
+  .printer textarea, .printer input {
     white-space: nowrap;
     height: 100px;
   }
@@ -66,7 +66,7 @@
       <tr><td>sessionTimeout</td><td>{{ cuss2.environment.sessionTimeout }}</td></tr>
     </table>
 
-    <section id="bpp">
+    <section id="bpp" class="printer">
       <h2>Boarding Pass Printer</h2>
       <dl>
         <dt>Environment:</dt>
@@ -77,14 +77,14 @@
         <dd>{{bpp.PS || 'NONE'}}</dd>
       </dl>
       <details>
-        <label for="assets">Assets</label><br>
-        <textarea id="assets" [(ngModel)]="assets"></textarea><br>
-        <label for="coupon">Coupon</label><br>
-        <input id="coupon" type="text" [(ngModel)]="coupon" [ngModelOptions]="{standalone: true}"><br>
+        <label for="bpp_assets">Assets</label><br>
+        <textarea id="bpp_assets" [(ngModel)]="bpp.assets"></textarea><br>
+        <label for="bpp_coupon">Coupon</label><br>
+        <input id="bpp_coupon" type="text" [(ngModel)]="bpp.coupon" [ngModelOptions]="{standalone: true}"><br>
       </details>
-      <button (click)="print()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
+      <button (click)="printBoardingPass()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
     </section>
-    <section id="btp">
+    <section id="btp" class="printer">
       <h2>Bag Tag Printer</h2>
       <dl>
         <dt>Environment: <a href="#" (click)="cuss2?.bagTagPrinter?.getEnvironment()">query</a></dt>
@@ -94,6 +94,13 @@
         <dt>Parametric Tables Loaded:</dt>
         <dd>{{btp.PS || 'NONE'}}</dd>
       </dl>
+      <details>
+        <label for="btp_assets">Assets</label><br>
+        <textarea id="btp_assets" [(ngModel)]="btp.assets"></textarea><br>
+        <label for="btp_coupon">Coupon</label><br>
+        <input id="btp_coupon" type="text" [(ngModel)]="btp.coupon" [ngModelOptions]="{standalone: true}"><br>
+      </details>
+      <button (click)="printBagTag()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Bag Tag</button>
     </section>
   </section>
 
