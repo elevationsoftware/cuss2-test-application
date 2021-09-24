@@ -1,4 +1,16 @@
 <style>
+  @-moz-keyframes spin {
+    100% { -moz-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  @keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform:rotate(360deg);
+    }
+  }
   :host {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 14px;
@@ -10,52 +22,224 @@
   .printer, .printer textarea, .printer input {
     width: 100%;
   }
-  .printer textarea, .printer input {
+  .printer textarea {
     white-space: nowrap;
     height: 100px;
   }
-  /*dt,dd {*/
-  /*  display: inline-block;*/
-  /*}*/
-  /*dt {*/
-  /*  width: 50px;*/
-  /*}*/
+  summary {
+    padding: 0;
+  }
+  details[open] {
+    margin-bottom: 40px;
+  }
+  summary > h2 {
+    display: inline-block;
+    margin: 10px 0;
+    width: 240px;
+  }
+  summary > h3 {
+    display: inline-block;
+    margin: 0 0 0 60px;
+    width: 196px;
+  }
+  summary span {
+    background-color: green;
+    color: white;
+    border: solid 1px grey;
+    margin: 3px;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  summary span.UNAVAILABLE, summary span.NOT_RESPONDING, summary span.MEDIA_ABSENT {
+    background-color: crimson;
+    color: yellow;
+  }
+  summary span.MEDIA_PRESENT {
+    background-color: gold;
+    color: black;
+  }
+
+  dl {
+    margin: 0;
+  }
+  #components, #componentList, #environment {
+    margin: 20px 0;
+  }
+
+  button.query {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: transparent;
+    padding: 0;
+    vertical-align: text-bottom;
+  }
+  button.query:hover {
+    color: blue;
+  }
+  button.pending, button.pending.query:hover {
+    color: lightgrey;
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
+    cursor: default;
+  }
 </style>
 
 <div class="content" role="main">
   <h1 style="display:inline">Angular Airlines</h1>
   <span> - {{ cuss2?.state || 'UNKNOWN' }}</span>
 
-  <section *ngIf="connectionStatus">
-    {{ connectionStatus }}
-  </section>
-
-  <section *ngIf="!connectionStatus">
+  <section *ngIf="!!cuss2">
 
     <label>Online:
       <input type="checkbox" [(ngModel)]="online"
              [ngModelOptions]="{standalone: true}">
     </label>
-
-    <table>
-      <tr *ngFor="let component of components">
-        <td>{{ component.id }}</td>
-        <td>{{ component.eventHandlingCode === 'UNAVAILABLE' ? '🚨' : '✅' }}</td>
-        <td>{{ component.constructor.name }}</td>
-        <td>{{ component.status }}</td>
-        <td>{{ component.eventHandlingCode }}</td>
-        <td><button (click)="component.query()">Query</button></td>
-        <td><button (click)="component.enable()">Enable</button></td>
-      </tr>
-    </table>
-
-
     <button (click)="exit()" disabled="{{ canExit() ? '' : 'disabled' }}">Exit</button>
-    <button (click)="cuss2?.queryComponents()">Query Components</button>
     <button (click)="cuss2?.requestReload()">Request Reload</button>
     <button (click)="cuss2?.requestActiveState()" [disabled]="!cuss2 || cuss2.state !== 'AVAILABLE'" >Request Active</button>
 
-    <table *ngIf="!!cuss2">
+    <section id="components">
+      <section id="bpp" class="printer">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{cuss2?.boardingPassPrinter?.pending ?'pending':''}}" (click)="cuss2?.boardingPassPrinter?.query()" [disabled]="cuss2?.boardingPassPrinter?.pending">⟳</button>
+              Boarding Pass Printer
+            </h2>
+            <span class="{{cuss2?.boardingPassPrinter?.eventHandlingCode}}">{{cuss2?.boardingPassPrinter?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.boardingPassPrinter?.status !== 'OK'" class="{{cuss2?.boardingPassPrinter?.status}}">{{cuss2?.boardingPassPrinter?.status}}</span>
+            <br>
+            <h3>
+              <button class="query {{cuss2?.boardingPassPrinter?.feeder?.pending ?'pending':''}}" (click)="cuss2?.boardingPassPrinter?.feeder?.query()" [disabled]="cuss2?.boardingPassPrinter?.feeder?.pending">⟳</button>
+              Feeder
+            </h3>
+            <span class="{{cuss2?.boardingPassPrinter?.feeder?.eventHandlingCode}}">{{cuss2?.boardingPassPrinter?.feeder?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.boardingPassPrinter?.status !== 'OK'" class="{{cuss2?.boardingPassPrinter?.feeder?.status}}">{{cuss2?.boardingPassPrinter?.feeder?.status}}</span>
+            <br>
+            <h3>
+              <button class="query {{cuss2?.boardingPassPrinter?.dispenser?.pending ?'pending':''}}" (click)="cuss2?.boardingPassPrinter?.dispenser?.query()" [disabled]="cuss2?.boardingPassPrinter?.dispenser?.pending">⟳</button>
+              Dispenser
+            </h3>
+            <span class="{{cuss2?.boardingPassPrinter?.dispenser?.eventHandlingCode}}">{{cuss2?.boardingPassPrinter?.dispenser?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.boardingPassPrinter?.status !== 'OK'" class="{{cuss2?.boardingPassPrinter?.dispenser?.status}}">{{cuss2?.boardingPassPrinter?.dispenser?.status}}</span>
+          </summary>
+          <dl>
+            <dt>Environment:</dt>
+            <dd *ngFor="let item of bpp.ES | keyvalue">{{item.key}}={{item.value}}</dd>
+            <dt>Logos Loaded:</dt>
+            <dd>{{bpp.LS || 'NONE'}}</dd>
+            <dt>Parametric Tables Loaded:</dt>
+            <dd>{{bpp.PS || 'NONE'}}</dd>
+          </dl>
+          <label for="bpp_assets">Assets</label><br>
+          <textarea id="bpp_assets" [(ngModel)]="bpp.assets"></textarea><br>
+          <label for="bpp_coupon">Coupon</label><br>
+          <input id="bpp_coupon" type="text" [(ngModel)]="bpp.coupon" [ngModelOptions]="{standalone: true}"><br>
+          <button (click)="printBoardingPass()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
+        </details>
+      </section>
+      <section id="btp" class="printer">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{cuss2?.bagTagPrinter?.pending ?'pending':''}}" (click)="cuss2?.bagTagPrinter?.query()" [disabled]="cuss2?.bagTagPrinter?.pending">⟳</button>
+              Bag Tag Printer
+            </h2>
+            <span class="{{cuss2?.bagTagPrinter?.eventHandlingCode}}">{{cuss2?.bagTagPrinter?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.bagTagPrinter?.status !== 'OK'" class="{{cuss2?.bagTagPrinter?.status}}">{{cuss2?.bagTagPrinter?.status}}</span>
+            <br>
+            <h3>
+              <button class="query {{cuss2?.bagTagPrinter?.feeder?.pending ?'pending':''}}" (click)="cuss2?.bagTagPrinter?.feeder?.query()" [disabled]="cuss2?.bagTagPrinter?.feeder?.pending">⟳</button>
+              Feeder
+            </h3>
+            <span class="{{cuss2?.bagTagPrinter?.feeder?.eventHandlingCode}}">{{cuss2?.bagTagPrinter?.feeder?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.bagTagPrinter?.feeder?.status !== 'OK'" class="{{cuss2?.bagTagPrinter?.feeder?.status}}">{{cuss2?.bagTagPrinter?.feeder?.status}}</span>
+            <br>
+            <h3>
+              <button class="query {{cuss2?.bagTagPrinter?.dispenser?.pending ?'pending':''}}" (click)="cuss2?.bagTagPrinter?.dispenser?.query()" [disabled]="cuss2?.bagTagPrinter?.dispenser?.pending">⟳</button>
+              Dispenser
+            </h3>
+            <span class="{{cuss2?.bagTagPrinter?.dispenser?.eventHandlingCode}}">{{cuss2?.bagTagPrinter?.dispenser?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.bagTagPrinter?.dispenser?.status !== 'OK'" class="{{cuss2?.bagTagPrinter?.dispenser?.status}}">{{cuss2?.bagTagPrinter?.dispenser?.status}}</span>
+          </summary>
+          <dl>
+            <dt>Environment: <a href="#" (click)="cuss2?.bagTagPrinter?.getEnvironment()">query</a></dt>
+            <dd *ngFor="let item of btp.ES | keyvalue">{{item.key}}={{item.value}}</dd>
+            <dt>Logos Loaded:</dt>
+            <dd>{{btp.LS || 'NONE'}}</dd>
+            <dt>Parametric Tables Loaded:</dt>
+            <dd>{{btp.PS || 'NONE'}}</dd>
+          </dl>
+          <label for="btp_assets">Assets</label><br>
+          <textarea id="btp_assets" [(ngModel)]="btp.assets"></textarea><br>
+          <label for="btp_coupon">Coupon</label><br>
+          <input id="btp_coupon" type="text" [(ngModel)]="btp.coupon" [ngModelOptions]="{standalone: true}"><br>
+          <button (click)="printBagTag()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Bag Tag</button>
+        </details>
+      </section>
+      <section id="barcodeReader">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{cuss2?.barcodeReader?.pending ?'pending':''}}" (click)="cuss2?.barcodeReader?.query()" [disabled]="cuss2?.barcodeReader?.pending">⟳</button>
+              Barcode Reader
+            </h2>
+            <span class="{{cuss2?.barcodeReader?.eventHandlingCode}}">{{cuss2?.barcodeReader?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.barcodeReader?.status !== 'OK'" class="{{cuss2?.barcodeReader?.status}}">{{cuss2?.barcodeReader?.status}}</span>
+          </summary>
+          Nothing here yet :(
+        </details>
+      </section>
+      <section id="keypad">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{cuss2?.keypad?.pending ?'pending':''}}" (click)="cuss2?.keypad?.query()" [disabled]="cuss2?.keypad?.pending">⟳</button>
+              Keypad
+            </h2>
+            <span class="{{cuss2?.keypad?.eventHandlingCode}}">{{cuss2?.keypad?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.keypad?.status !== 'OK'" class="state">{{cuss2?.keypad?.status}}</span>
+          </summary>
+          Nothing here yet :(
+        </details>
+      </section>
+      <section id="announcement">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{cuss2?.announcement?.pending ?'pending':''}}" (click)="cuss2?.announcement?.query()" [disabled]="cuss2?.announcement?.pending">⟳</button>
+              Announcement
+            </h2>
+            <span class="{{cuss2?.announcement?.eventHandlingCode}}">{{cuss2?.announcement?.eventHandlingCode}}</span>
+            <span *ngIf="cuss2?.announcement?.status !== 'OK'" class="state">{{cuss2?.announcement?.status}}</span>
+          </summary>
+          Nothing here yet :(
+        </details>
+      </section>
+    </section>
+
+    <section id="componentList">
+      <details>
+        <summary>Component List</summary>
+        <table>
+          <tr *ngFor="let component of components">
+            <td>{{ component.id }}</td>
+            <td>{{ component.eventHandlingCode === 'UNAVAILABLE' ? '🚨' : '✅' }}</td>
+            <td>{{ component.constructor.name }}</td>
+            <td>{{ component.status }}</td>
+            <td>{{ component.eventHandlingCode }}</td>
+            <td><button (click)="component.query()">Query</button></td>
+            <td><button (click)="component.enable()">Enable</button></td>
+          </tr>
+        </table>
+        <button (click)="cuss2?.queryComponents()">Query Components</button>
+      </details>
+    </section>
+
+
+    <table id="environment" *ngIf="!!cuss2">
       <tr><td>cussInterfaceVersions</td><td>{{ cuss2.environment.cussInterfaceVersions }}</td></tr>
       <tr><td>cussVersions</td><td>{{ cuss2.environment.cussVersions }}</td></tr>
       <tr><td>deviceID</td><td>{{ cuss2.environment.deviceID }}</td></tr>
@@ -65,44 +249,15 @@
       <tr><td>osVersion</td><td>{{ cuss2.environment.osVersion }}</td></tr>
       <tr><td>sessionTimeout</td><td>{{ cuss2.environment.sessionTimeout }}</td></tr>
     </table>
-
-    <section id="bpp" class="printer">
-      <h2>Boarding Pass Printer</h2>
-      <dl>
-        <dt>Environment:</dt>
-        <dd *ngFor="let item of bpp.ES | keyvalue">{{item.key}}={{item.value}}</dd>
-        <dt>Logos Loaded:</dt>
-        <dd>{{bpp.LS || 'NONE'}}</dd>
-        <dt>Parametric Tables Loaded:</dt>
-        <dd>{{bpp.PS || 'NONE'}}</dd>
-      </dl>
-      <details>
-        <label for="bpp_assets">Assets</label><br>
-        <textarea id="bpp_assets" [(ngModel)]="bpp.assets"></textarea><br>
-        <label for="bpp_coupon">Coupon</label><br>
-        <input id="bpp_coupon" type="text" [(ngModel)]="bpp.coupon" [ngModelOptions]="{standalone: true}"><br>
-      </details>
-      <button (click)="printBoardingPass()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
-    </section>
-    <section id="btp" class="printer">
-      <h2>Bag Tag Printer</h2>
-      <dl>
-        <dt>Environment: <a href="#" (click)="cuss2?.bagTagPrinter?.getEnvironment()">query</a></dt>
-        <dd *ngFor="let item of btp.ES | keyvalue">{{item.key}}={{item.value}}</dd>
-        <dt>Logos Loaded:</dt>
-        <dd>{{btp.LS || 'NONE'}}</dd>
-        <dt>Parametric Tables Loaded:</dt>
-        <dd>{{btp.PS || 'NONE'}}</dd>
-      </dl>
-      <details>
-        <label for="btp_assets">Assets</label><br>
-        <textarea id="btp_assets" [(ngModel)]="btp.assets"></textarea><br>
-        <label for="btp_coupon">Coupon</label><br>
-        <input id="btp_coupon" type="text" [(ngModel)]="btp.coupon" [ngModelOptions]="{standalone: true}"><br>
-      </details>
-      <button (click)="printBagTag()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Bag Tag</button>
-    </section>
   </section>
+
+  <details [open]="!cuss2">
+    <summary><h2>API Connection Details</h2></summary>
+    <ul>
+      <li *ngFor="let item of connectionStatus">{{item}}</li>
+    </ul>
+  </details>
+
 
 </div>
 

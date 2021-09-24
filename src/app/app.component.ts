@@ -17,7 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private alive: boolean = true;
   cuss2?: Cuss2;
 
-  connectionStatus = "Connecting to CUSS2 platform...";
+  connectionStatus = [ "Connecting to CUSS2 platform..." ];
   bpp = { LS: 'waiting for active state', ES: <any> 'waiting for active state', PS: 'waiting for active state',
     assets: 'PT##$S6A#@;#TICK#CHEC#BOAR#0101110112011301210122012301C#0201A34#03BRB061661#0430G25F\n' +
       'TT01#01L08004790100000\n' +
@@ -33,15 +33,18 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private cuss2Service: Cuss2Service){}
 
   async ngOnInit(): Promise<void> {
-    // this.cuss2Service.logger = true
-    // TODO: make it so the config only has to be passed in on module creation
+    Cuss2.logger.subscribe((x:any) => {
+      if (x.level !== 'info') return;
+      this.connectionStatus.push(x.action);
+      // console.log(x.action)
+    });
+
     try {
       this.cuss2 = await this.cuss2Service.start(environment.cuss2Config as ICuss2ServiceOptions);
-      this.connectionStatus = '';
     }
     catch(e) {
       console.error(e);
-      this.connectionStatus = e.message;
+      this.connectionStatus.push(e.message);
     }
 
     if (!this.cuss2) {
@@ -79,7 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.bpp.LS = responses[1];
       this.bpp.PS = responses[2];
 
-      this.btp.LS = responses[3]
+      this.btp.LS = responses[3];
       this.btp.PS = responses[4];
     };
     cuss2.applicationOnline = true;
