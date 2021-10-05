@@ -34,6 +34,9 @@ export class AppComponent implements OnInit, OnDestroy {
   brTimeout = 10000;
   drTimeout = 10000;
 
+  words = 'The optimist invents the airplane and the pessimist the parachute.';
+  keys:string[] = []
+
   get BPP() { return this.cuss2?.boardingPassPrinter; }
   get BTP() { return this.cuss2?.bagTagPrinter; }
   get keypad() { return this.cuss2?.keypad; }
@@ -73,6 +76,11 @@ export class AppComponent implements OnInit, OnDestroy {
     if (cuss2.boardingPassPrinter) cuss2.boardingPassPrinter.required = true;
     if (cuss2.barcodeReader) {
       cuss2.barcodeReader.required = true;
+    }
+    if (cuss2.keypad) {
+      cuss2.keypad.data.subscribe((keys) => {
+        this.keys = Object.entries(keys).filter(e => e[1]).map(e => e[0]);
+      })
     }
 
     // @ts-ignore

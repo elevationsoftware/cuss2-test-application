@@ -42,7 +42,7 @@
     margin: 0 0 0 60px;
     width: 196px;
   }
-  summary > span, summary > button {
+  summary > span, summary > button, .key {
     background-color: green;
     color: white;
     border: solid 1px grey;
@@ -62,7 +62,7 @@
     background-color: crimson;
     color: yellow;
   }
-  summary span.MEDIA_PRESENT {
+  summary span.MEDIA_PRESENT, .key {
     background-color: gold;
     color: black;
   }
@@ -92,6 +92,9 @@
     -moz-animation:spin 1s linear infinite;
     animation:spin 1s linear infinite;
     cursor: default;
+  }
+  #announcement input {
+    width: 600px;
   }
 </style>
 
@@ -258,7 +261,7 @@
             <button *ngIf="keypad?.ready" (click)="toggleEnabled(keypad?.id)" [disabled]="keypad?.pending" class="{{keypad?.enabled?'enabled':'disabled'}}">{{keypad?.enabled?'ENABLED':'DISABLED'}}</button>
             <span *ngIf="keypad?.status !== 'OK'" class="state">{{keypad?.status}}</span>
           </summary>
-          Nothing here yet :(
+          <span class="key" *ngFor="let key of keys">{{key}}</span>
         </details>
       </section>
 
@@ -273,7 +276,11 @@
             <button *ngIf="announcement?.ready" (click)="toggleEnabled(announcement?.id)" [disabled]="announcement?.pending" class="{{announcement?.enabled?'enabled':'disabled'}}">{{announcement?.enabled?'ENABLED':'DISABLED'}}</button>
             <span *ngIf="announcement?.status !== 'OK'" class="state">{{announcement?.status}}</span>
           </summary>
-          Nothing here yet :(
+          <input  type="text" [(ngModel)]="words" [ngModelOptions]="{standalone: true}"><br>
+          <button *ngIf="announcement?.ready" (click)="announcement?.say(words)" [disabled]="!announcement?.enabled || announcement?.pending">Say it!</button>
+          <button *ngIf="announcement?.ready" (click)="announcement?.pause()" [disabled]="!announcement?.enabled || announcement?.pending">Pause</button>
+          <button *ngIf="announcement?.ready" (click)="announcement?.resume()" [disabled]="!announcement?.enabled || announcement?.pending">Resume</button>
+          <button *ngIf="announcement?.ready" (click)="announcement?.stop()" [disabled]="!announcement?.enabled || announcement?.pending">Stop</button>
         </details>
       </section>
     </section>
