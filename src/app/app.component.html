@@ -37,12 +37,12 @@
     margin: 10px 0;
     width: 240px;
   }
-  summary > h3 {
+  summary > h3, details > h3 {
     display: inline-block;
     margin: 0 0 0 60px;
     width: 196px;
   }
-  summary > span, summary > button, .key {
+  details > span, summary > span, summary > button, .key {
     background-color: green;
     color: white;
     border: solid 1px grey;
@@ -50,7 +50,7 @@
     padding: 1px 5px;
     border-radius: 4px;
   }
-  summary > button {
+  summary > button, details > button {
     cursor: pointer;
     font: inherit;
   }
@@ -58,11 +58,11 @@
     background-color: lightgrey;
     color: black;
   }
-  summary span.UNAVAILABLE, summary span.NOT_RESPONDING, summary span.MEDIA_ABSENT {
+  details > span.UNAVAILABLE, details > span.NOT_RESPONDING, details > span.MEDIA_ABSENT {
     background-color: crimson;
     color: yellow;
   }
-  summary span.MEDIA_PRESENT, .key {
+  span.MEDIA_PRESENT, .key {
     background-color: gold;
     color: black;
   }
@@ -164,21 +164,21 @@
             <span class="{{BTP?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.ready? 'READY':'UNAVAILABLE'}}</span>
             <button *ngIf="BTP?.ready" (click)="toggleEnabled(BTP?.id)" [disabled]="BTP?.pending" class="{{BTP?.enabled?'enabled':'disabled'}}">{{BTP?.enabled?'ENABLED':'DISABLED'}}</button>
             <span *ngIf="BTP?.status !== 'OK'" class="{{BTP?.status}}">{{BTP?.status}}</span>
-            <br>
-            <h3>
-              <button class="query {{BTP?.feeder?.pending ?'pending':''}}" (click)="BTP?.feeder?.query()" [disabled]="BTP?.feeder?.pending">⟳</button>
-              Feeder
-            </h3>
-            <span class="{{BTP?.feeder?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.feeder?.ready? 'READY':'UNAVAILABLE'}}</span>
-            <span *ngIf="BTP?.feeder?.status !== 'OK'" class="{{BTP?.feeder?.status}}">{{BTP?.feeder?.status}}</span>
-            <br>
-            <h3>
-              <button class="query {{BTP?.dispenser?.pending ?'pending':''}}" (click)="BTP?.dispenser?.query()" [disabled]="BTP?.dispenser?.pending">⟳</button>
-              Dispenser
-            </h3>
-            <span class="{{BTP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}</span>
-            <span *ngIf="BTP?.dispenser?.status !== 'OK'" class="{{BTP?.dispenser?.status}}">{{BTP?.dispenser?.status}}</span>
+            <span *ngIf="BTP?.mediaPresent" class="">MEDIAPRESENT=true</span>
           </summary>
+          <h3>
+            <button class="query {{BTP?.feeder?.pending ?'pending':''}}" (click)="BTP?.feeder?.query()" [disabled]="BTP?.feeder?.pending">⟳</button>
+            Feeder
+          </h3>
+          <span class="{{BTP?.feeder?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.feeder?.ready? 'READY':'UNAVAILABLE'}}</span>
+          <span *ngIf="BTP?.feeder?.status !== 'OK'" class="{{BTP?.feeder?.status}}">{{BTP?.feeder?.status}}</span>
+          <br>
+          <h3>
+            <button class="query {{BTP?.dispenser?.pending ?'pending':''}}" (click)="BTP?.dispenser?.query()" [disabled]="BTP?.dispenser?.pending">⟳</button>
+            Dispenser
+          </h3>
+          <span class="{{BTP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}</span>
+          <span *ngIf="BTP?.dispenser?.status !== 'OK'" class="{{BTP?.dispenser?.status}}">{{BTP?.dispenser?.status}}</span>
           <dl>
             <dt>Environment: <a href="#" (click)="BTP?.getEnvironment()">query</a></dt>
             <dd *ngFor="let item of btpData.ES | keyvalue">{{item.key}}={{item.value}}</dd>
