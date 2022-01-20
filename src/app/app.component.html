@@ -130,7 +130,7 @@
               Feeder
             </h3>
             <span class="{{BPP?.feeder?.ready? 'READY':'UNAVAILABLE'}}">{{BPP?.feeder?.ready? 'READY':'UNAVAILABLE'}}</span>
-            <span *ngIf="BPP?.status !== 'OK'" class="{{BPP?.feeder?.status}}">{{BPP?.feeder?.status}}</span>
+            <span *ngIf="BPP?.feeder?.status !== 'OK'" class="{{BPP?.feeder?.status}}">{{BPP?.feeder?.status}}</span>
             <br>
             <h3>
               <button class="query {{BPP?.dispenser?.pending ?'pending':''}}" (click)="BPP?.dispenser?.query()" [disabled]="BPP?.dispenser?.pending">⟳</button>
