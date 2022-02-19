@@ -114,16 +114,16 @@
     <button (click)="cuss2?.requestActiveState()" [disabled]="!cuss2 || cuss2.state !== 'AVAILABLE'" >Request Active</button>
 
     <section id="components">
-      <section id="bpp" class="printer">
+      <section id="bpp" class="printer" *ngIf="BPP">
         <details>
           <summary>
             <h2 class="component">
               <button class="query {{BPP?.pending ?'pending':''}}" (click)="BPP?.query()" [disabled]="BPP?.pending">⟳</button>
               Boarding Pass Printer
             </h2>
-            <span class="{{BPP?.ready? 'READY':'UNAVAILABLE'}}">{{BPP?.ready? 'READY':'UNAVAILABLE'}}</span>
-            <button *ngIf="BPP?.ready" (click)="toggleEnabled(BPP?.id)" [disabled]="BPP?.pending" class="{{BPP?.enabled?'enabled':'disabled'}}">{{BPP?.enabled?'ENABLED':'DISABLED'}}</button>
-            <span *ngIf="BPP?.status !== 'OK'" class="{{BPP?.status}}">{{BPP?.status}}</span>
+            <span class="{{BPP?.combinedReady? 'READY':'UNAVAILABLE'}}">{{BPP?.combinedReady? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="BPP?.combinedReady" (click)="toggleEnabled(BPP?.id)" [disabled]="BPP?.pending" class="{{BPP?.enabled?'enabled':'disabled'}}">{{BPP?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="BPP?.combinedStatus !== 'OK'" class="{{BPP?.combinedStatus}}">{{BPP?.combinedStatus}}</span>
             <br>
             <h3>
               <button class="query {{BPP?.feeder?.pending ?'pending':''}}" (click)="BPP?.feeder?.query()" [disabled]="BPP?.feeder?.pending">⟳</button>
@@ -155,7 +155,7 @@
         </details>
       </section>
 
-      <section id="btp" class="printer">
+      <section id="btp" class="printer" *ngIf="BTP">
         <details>
           <summary>
             <h2 class="component">
@@ -196,7 +196,7 @@
         </details>
       </section>
 
-      <section id="barcodeReader">
+      <section id="barcodeReader" *ngIf="barcodeReader">
         <details>
           <summary>
             <h2 class="component">
@@ -214,7 +214,7 @@
         </details>
       </section>
 
-      <section id="cardReader">
+      <section id="cardReader" *ngIf="cardReader">
         <details>
           <summary>
             <h2 class="component">
@@ -233,7 +233,7 @@
         </details>
       </section>
 
-      <section id="documentReader">
+      <section id="documentReader" *ngIf="documentReader">
         <details>
           <summary>
             <h2 class="component">
@@ -251,7 +251,7 @@
         </details>
       </section>
 
-      <section id="keypad">
+      <section id="keypad" *ngIf="keypad">
         <details>
           <summary>
             <h2 class="component">
@@ -266,7 +266,7 @@
         </details>
       </section>
 
-      <section id="announcement">
+      <section id="announcement" *ngIf="announcement">
         <details>
           <summary>
             <h2 class="component">
