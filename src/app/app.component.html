@@ -137,7 +137,7 @@
               Dispenser
             </h3>
             <span class="{{BPP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}">{{BPP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}</span>
-            <span *ngIf="BPP?.status !== 'OK'" class="{{BPP?.dispenser?.status}}">{{BPP?.dispenser?.status}}</span>
+            <span *ngIf="BPP?.dispenser?.status !== 'OK'" class="{{BPP?.dispenser?.status}}">{{BPP?.dispenser?.status}}</span>
           </summary>
           <dl>
             <dt>Environment:</dt>
