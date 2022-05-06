@@ -53,9 +53,19 @@ export class AppComponent implements OnInit, OnDestroy {
       this.connectionStatus.push(x.action);
       // console.log(x.action)
     });
+    const searchParams = new URLSearchParams(location.search);
+    let cussInfo: any = environment.cuss2Config;
+    if (searchParams.has('cussUrl')) {
+      cussInfo = {
+        cussUrl: searchParams.get('cussUrl'),
+        oauthUrl: searchParams.has('oauthUrl') ? searchParams.get('oauthUrl') : searchParams.get('cussUrl'),
+        clientId: searchParams.get('id'),
+        clientSecret: searchParams.get('secret')
+      }
+    }
 
     try {
-      this.cuss2 = await this.cuss2Service.start(environment.cuss2Config as ICuss2ServiceOptions);
+      this.cuss2 = await this.cuss2Service.start(cussInfo as ICuss2ServiceOptions);
     }
     catch(e) {
       console.error(e);
