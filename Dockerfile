@@ -8,7 +8,7 @@ COPY . /usr/src/app
 
 
 # Install dependencies
-RUN npm install
+RUN npm install && npm cache clean --force
 
 # Build angular app
 RUN npm run build
