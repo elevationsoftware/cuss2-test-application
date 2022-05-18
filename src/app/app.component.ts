@@ -1,7 +1,7 @@
 import { Component as AngularComponent, OnInit, OnDestroy } from '@angular/core';
 
 import { environment } from '../environments/environment';
-import { Cuss2Service, ICuss2ServiceOptions } from '@elevated-libs/cuss2-angular';
+import {ApplicationActivation, Cuss2Service, ICuss2ServiceOptions} from '@elevated-libs/cuss2-angular';
 import {ApplicationStates, Cuss2, Component, StateChange } from "@elevated-libs/cuss2";
 import ApplicationStateCodeEnum = ApplicationStates.ApplicationStateCodeEnum;
 
@@ -16,6 +16,12 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'cuss2-example-angular';
   private alive: boolean = true;
   cuss2?: Cuss2;
+  activationInfo: ApplicationActivation = {
+    accessibleMode: false,
+    applicationBrand: "??",
+    executionMode: "DSAM",
+    languageID: ""
+  }
 
   connectionStatus = [ "Connecting to CUSS2 platform..." ];
   bppData = { LS: 'waiting for active state', ES: <any> 'waiting for active state', PS: 'waiting for active state',
@@ -76,13 +82,14 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
     const cuss2 = this.cuss2;
+    this.activationInfo.applicationBrand = cuss2.connection._auth.client_id
 
     cuss2.stateChange.subscribe(async (state: StateChange) => {
       this.title = state.current;
     });
 
     // Object.values(cuss2.components).forEach((c:any) => c.required = false);
-    if (cuss2.bagTagPrinter) cuss2.bagTagPrinter.required = true;
+    // if (cuss2.bagTagPrinter) cuss2.bagTagPrinter.required = true;
     // if (cuss2.boardingPassPrinter) cuss2.boardingPassPrinter.required = true;
     // if (cuss2.barcodeReader) {
     //   cuss2.barcodeReader.required = true;
@@ -98,38 +105,28 @@ export class AppComponent implements OnInit, OnDestroy {
     // @ts-ignore
     window.appComponent = this
 
-    cuss2.bagTagPrinter?.onmessage.subscribe((d:any) => {
-      console.log({
-        id: d.componentID, s: d.statusCode, e: d.eventHandlingCode, f: d.functionName
-      });
-    })
-    cuss2.bagTagPrinter?.dispenser.onmessage.subscribe((d:any) => {
-      console.log({
-        id: d.componentID, s: d.statusCode, e: d.eventHandlingCode, f: d.functionName
-      });
-    })
-
-    cuss2.activated.subscribe(async () => {
+    cuss2.activated.subscribe(async (activationInfo) => {
+      this.activationInfo = activationInfo
       console.log('APPLICATION ACTIVATED');
 
       // cuss2.boardingPassPrinter?.setupRaw(this.bppData.assets.split('\n'))
       //   .catch(console.error);
 
-      const responses = await Promise.all([
-        cuss2.boardingPassPrinter?.getEnvironment(),
-        cuss2.boardingPassPrinter?.logos.query(),
-        cuss2.boardingPassPrinter?.pectabs.query(),
-        // cuss2.bagTagPrinter?.getEnvironment(), // this crashes right now
-        cuss2.bagTagPrinter?.logos.query(),
-        cuss2.bagTagPrinter?.pectabs.query()
-      ]);
-
-      this.bppData.ES = responses[0];
-      this.bppData.LS = responses[1];
-      this.bppData.PS = responses[2];
-
-      this.btpData.LS = responses[3];
-      this.btpData.PS = responses[4];
+      // const responses = await Promise.all([
+      //   cuss2.boardingPassPrinter?.getEnvironment(),
+      //   cuss2.boardingPassPrinter?.logos.query(),
+      //   cuss2.boardingPassPrinter?.pectabs.query(),
+      //   // cuss2.bagTagPrinter?.getEnvironment(), // this crashes right now
+      //   cuss2.bagTagPrinter?.logos.query(),
+      //   cuss2.bagTagPrinter?.pectabs.query(),
+      // ]);
+      //
+      // this.bppData.ES = responses[0];
+      // this.bppData.LS = responses[1];
+      // this.bppData.PS = responses[2];
+      //
+      // this.btpData.LS = responses[3];
+      // this.btpData.PS = responses[4];
     });
 
     cuss2.deactivated.subscribe(async (current) => {
