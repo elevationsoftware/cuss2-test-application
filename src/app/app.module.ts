@@ -15,7 +15,7 @@ import {FormsModule} from "@angular/forms";
   imports: [
     BrowserModule,
     AppRoutingModule,
-    Cuss2Module.forRoot(environment.cuss2Config as ICuss2ServiceOptions),
+    Cuss2Module.forRoot(environment as ICuss2ServiceOptions),
     FormsModule
   ],
   providers: [],
