@@ -1,16 +1,15 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+import {ICuss2ServiceOptions} from "@elevated-libs/cuss2-angular";
+
 const qs = new URLSearchParams(window.location.search);
 
-export const environment = {
+export const environment : ICuss2ServiceOptions = {
   production: false,
-
-  cuss2Config: {
-    cussUrl: qs.get('url') || 'https://localhost:22222',
-    clientId: qs.get('id') || 'EL',
-    clientSecret:  qs.get('secret') || '12345678'
-  }
+  cussUrl: qs.get('url') || 'https://localhost:22222',
+  clientId: qs.get('id') || 'ELV',
+  clientSecret:  qs.get('secret') || '12345678'
 }
 /*
  * For easier debugging in development mode, you can import the following file
