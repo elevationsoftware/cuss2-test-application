@@ -1,10 +1,14 @@
-const  express = require('express');
-const bodyParser = require('body-parser');
-const compression = require('compression');
+import express from 'express';
+import bodyParser from 'body-parser';
+import compression from 'compression';
 
-const path = require('path');
+import path  from 'path';
 const app = express();
 const port = process.env.PORT || 3001;
+
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function setLongTermCache(res) {
   res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());

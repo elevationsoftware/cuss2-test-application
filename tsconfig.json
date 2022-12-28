@@ -2,14 +2,22 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
     "sourceMap": true,
+    "module": "esnext",
     "lib": ["es2020", "dom"],
     "rootDir": "src",
     "moduleResolution": "node",
     "target": "ESNext",
-    "declaration": true,
+    "declaration": false,
     "allowJs": true,
     "outDir": "./dist",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "experimentalDecorators": true
   },
   "angularCompilerOptions": {
