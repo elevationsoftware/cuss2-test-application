@@ -1,7 +1,7 @@
 import { Component as AngularComponent, OnInit, OnDestroy } from '@angular/core';
 
 import { environment } from '../environments/environment';
-import {ApplicationStateCodes, ApplicationActivation, ApplicationActivationExecutionModeEnum} from "@elevated-libs/cuss2-typescript-models";
+import {ApplicationStateCodes, ApplicationActivation, ApplicationActivationExecutionModeEnum} from "cuss2-typescript-models";
 import {Cuss2, logger, Component} from "@elevated-libs/cuss2";
 
 import ApplicationStateCodeEnum = ApplicationStateCodes

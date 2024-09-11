@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { environment } from '../environments/environment';
-import { Cuss2Module, ICuss2ServiceOptions } from '@elevated-libs/cuss2-angular';
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
@@ -15,7 +14,6 @@ import {FormsModule} from "@angular/forms";
   imports: [
     BrowserModule,
     AppRoutingModule,
-    Cuss2Module.forRoot(environment as ICuss2ServiceOptions),
     FormsModule
   ],
   providers: [],
