@@ -60,14 +60,13 @@ export class AppComponent implements OnInit, OnDestroy {
     logger.subscribe((x:any) => {
       if (x.level !== 'info') return;
       this.connectionStatus.push(x.action);
-      // console.log(x.action)
     });
     const searchParams = new URLSearchParams(location.search);
     let cussInfo: any = environment;
     if (searchParams.has('CUSS-WSS')) {
       cussInfo = {
         cussUrl: searchParams.get('CUSS-WSS'),
-        oauthUrl: searchParams.has('OAUTH-URL') ? searchParams.get('OAUTH-URL') : searchParams.get('CUSS-WSS'),
+        oauthUrl: searchParams.has('OAUTH-URL'),
         clientId: searchParams.get('CLIENT-ID') || searchParams.get('client-id'),
         clientSecret: searchParams.get('CLIENT-SECRET') || searchParams.get('client-secret'),
         deviceID: searchParams.get('DEVICE-ID') || searchParams.get('device-id'),
@@ -93,12 +92,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.title = state.current;
     });
 
-    // Object.values(cuss2.components).forEach((c:any) => c.required = false);
-    // if (cuss2.bagTagPrinter) cuss2.bagTagPrinter.required = true;
-    // if (cuss2.boardingPassPrinter) cuss2.boardingPassPrinter.required = true;
-    // if (cuss2.barcodeReader) {
-    //   cuss2.barcodeReader.required = true;
-    // }
+  
     if (cuss2.keypad) {
       cuss2.keypad.data.subscribe((keys) => {
         this.keys = Object.entries(keys).filter(e => e[1]).map(e => e[0]);
@@ -113,25 +107,6 @@ export class AppComponent implements OnInit, OnDestroy {
     cuss2.activated.subscribe(async (activationInfo) => {
       this.activationInfo = activationInfo
       console.log('APPLICATION ACTIVATED');
-
-      // cuss2.boardingPassPrinter?.setupRaw(this.bppData.assets.split('\n'))
-      //   .catch(console.error);
-
-      // const responses = await Promise.all([
-      //   cuss2.boardingPassPrinter?.getEnvironment(),
-      //   cuss2.boardingPassPrinter?.logos.query(),
-      //   cuss2.boardingPassPrinter?.pectabs.query(),
-      //   // cuss2.bagTagPrinter?.getEnvironment(), // this crashes right now
-      //   cuss2.bagTagPrinter?.logos.query(),
-      //   cuss2.bagTagPrinter?.pectabs.query(),
-      // ]);
-      //
-      // this.bppData.ES = responses[0];
-      // this.bppData.LS = responses[1];
-      // this.bppData.PS = responses[2];
-      //
-      // this.btpData.LS = responses[3];
-      // this.btpData.PS = responses[4];
     });
 
     cuss2.deactivated.subscribe(async (current) => {
