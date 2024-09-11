@@ -1,7 +1,6 @@
 import { Component as AngularComponent, OnInit, OnDestroy } from '@angular/core';
 
 import { environment } from '../environments/environment';
-import {Cuss2Service, ICuss2ServiceOptions} from '@elevated-libs/cuss2-angular';
 import {ApplicationStateCodes, ApplicationActivation, ApplicationActivationExecutionModeEnum} from "@elevated-libs/cuss2-typescript-models";
 import {Cuss2, logger, Component} from "@elevated-libs/cuss2";
 
@@ -54,8 +53,6 @@ export class AppComponent implements OnInit, OnDestroy {
   get cardReader() { return this.cuss2?.cardReader; }
   get documentReader() { return this.cuss2?.documentReader; }
 
-  constructor(private cuss2Service: Cuss2Service){}
-
   async ngOnInit(): Promise<void> {
     logger.subscribe((x:any) => {
       if (x.level !== 'info') return;
@@ -75,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     try {
       // @ts-ignore
-      this.cuss2 = await this.cuss2Service.start(cussInfo as ICuss2ServiceOptions);
+      this.cuss2 = await Cuss2.connect(cussInfo.cussUrl, cussInfo.oauthUrl, cussInfo.deviceID, cussInfo.clientId, cussInfo.clientSecret);
     }
     catch(e) {
       console.error(e);
