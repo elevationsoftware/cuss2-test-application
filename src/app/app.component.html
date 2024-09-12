@@ -1,0 +1,330 @@
+<style>
+  @-moz-keyframes spin {
+    100% { -moz-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  @keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform:rotate(360deg);
+    }
+  }
+  :host {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .printer, .printer textarea, .printer input {
+    width: 100%;
+  }
+  .printer textarea {
+    white-space: nowrap;
+    height: 100px;
+  }
+  summary {
+    padding: 0;
+  }
+  details[open] {
+    margin-bottom: 40px;
+  }
+  summary > h2 {
+    display: inline-block;
+    margin: 10px 0;
+    width: 240px;
+  }
+  summary > h3, details > h3 {
+    display: inline-block;
+    margin: 0 0 0 60px;
+    width: 196px;
+  }
+  details > span, summary > span, summary > button, .key {
+    background-color: green;
+    color: white;
+    border: solid 1px grey;
+    margin: 3px;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  summary > button, details > button {
+    cursor: pointer;
+    font: inherit;
+  }
+  summary > button.disabled {
+    background-color: lightgrey;
+    color: black;
+  }
+  span.UNAVAILABLE, span.NOT_RESPONDING, span.MEDIA_ABSENT,
+  summary > span.UNAVAILABLE, summary > span.NOT_RESPONDING, summary > span.MEDIA_ABSENT {
+    background-color: crimson;
+    color: yellow;
+  }
+  span.MEDIA_PRESENT, .key {
+    background-color: gold;
+    color: black;
+  }
+
+  dl {
+    margin: 0;
+  }
+  #components, #componentList, #environment {
+    margin: 20px 0;
+  }
+
+  button.query {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: transparent;
+    padding: 0;
+    vertical-align: text-bottom;
+    font-weight: bold;
+  }
+  button.query:hover {
+    color: blue;
+  }
+  button.pending, button.pending.query:hover {
+    color: black;
+    -webkit-animation:spin 1s linear infinite;
+    -moz-animation:spin 1s linear infinite;
+    animation:spin 1s linear infinite;
+    cursor: default;
+  }
+  #announcement input {
+    width: 600px;
+  }
+</style>
+
+<div class="content" role="main">
+  <h1 style="display:inline">{{ activationInfo.applicationBrand || 'applicationBrand missing' }}</h1>
+  <span> - {{ cuss2?.state || 'UNKNOWN' }}</span>
+
+  <section *ngIf="!!cuss2">
+
+    <label>Online:
+      <input type="checkbox" [(ngModel)]="online"
+             [ngModelOptions]="{standalone: true}">
+    </label>
+    <button (click)="exit()" disabled="{{ canExit() ? '' : 'disabled' }}">Exit</button>
+    <button (click)="cuss2?.requestReload()">Request Reload</button>
+    <button (click)="cuss2?.requestActiveState()" [disabled]="!cuss2 || cuss2.state !== 'AVAILABLE'" >Request Active</button>
+
+    <section id="components">
+      <section id="bpp" class="printer" *ngIf="BPP">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{BPP?.pending ?'pending':''}}" (click)="BPP?.query()" [disabled]="BPP?.pending">⟳</button>
+              Boarding Pass Printer
+            </h2>
+            <span class="{{BPP?.combinedReady? 'READY':'UNAVAILABLE'}}">{{BPP?.combinedReady? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="BPP?.combinedReady" (click)="toggleEnabled(BPP?.id)" [disabled]="BPP?.pending" class="{{BPP?.enabled?'enabled':'disabled'}}">{{BPP?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="BPP?.combinedStatus !== 'OK'" class="{{BPP?.combinedStatus}}">{{BPP?.combinedStatus}}</span>
+            <br>
+            <h3>
+              <button class="query {{BPP?.feeder?.pending ?'pending':''}}" (click)="BPP?.feeder?.query()" [disabled]="BPP?.feeder?.pending">⟳</button>
+              Feeder
+            </h3>
+            <span class="{{BPP?.feeder?.ready? 'READY':'UNAVAILABLE'}}">{{BPP?.feeder?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <span *ngIf="BPP?.feeder?.status !== 'OK'" class="{{BPP?.feeder?.status}}">{{BPP?.feeder?.status}}</span>
+            <br>
+            <h3>
+              <button class="query {{BPP?.dispenser?.pending ?'pending':''}}" (click)="BPP?.dispenser?.query()" [disabled]="BPP?.dispenser?.pending">⟳</button>
+              Dispenser
+            </h3>
+            <span class="{{BPP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}">{{BPP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <span *ngIf="BPP?.dispenser?.status !== 'OK'" class="{{BPP?.dispenser?.status}}">{{BPP?.dispenser?.status}}</span>
+          </summary>
+          <dl>
+            <dt>Environment:</dt>
+            <dd *ngFor="let item of bppData.ES | keyvalue">{{item.key}}={{item.value}}</dd>
+            <dt>Logos Loaded:</dt>
+            <dd>{{bppData.LS || 'NONE'}}</dd>
+            <dt>Parametric Tables Loaded:</dt>
+            <dd>{{bppData.PS || 'NONE'}}</dd>
+          </dl>
+          <label for="bpp_assets">Assets</label><br>
+          <textarea id="bpp_assets" [(ngModel)]="bppData.assets"></textarea><br>
+          <label for="bpp_coupon">Coupon</label><br>
+          <input id="bpp_coupon" type="text" [(ngModel)]="bppData.coupon" [ngModelOptions]="{standalone: true}"><br>
+          <button (click)="printBoardingPass()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Boarding Pass</button>
+        </details>
+      </section>
+
+      <section id="btp" class="printer" *ngIf="BTP">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{BTP?.pending ?'pending':''}}" (click)="BTP?.query()" [disabled]="BTP?.pending">⟳</button>
+              Bag Tag Printer
+            </h2>
+            <span class="{{BTP?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="BTP?.ready" (click)="toggleEnabled(BTP?.id)" [disabled]="BTP?.pending" class="{{BTP?.enabled?'enabled':'disabled'}}">{{BTP?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="BTP?.status !== 'OK'" class="{{BTP?.status}}">{{BTP?.status}}</span>
+            <span *ngIf="BTP?.mediaPresent" class="">MEDIAPRESENT=true</span>
+          </summary>
+          <h3>
+            <button class="query {{BTP?.feeder?.pending ?'pending':''}}" (click)="BTP?.feeder?.query()" [disabled]="BTP?.feeder?.pending">⟳</button>
+            Feeder
+          </h3>
+          <span class="{{BTP?.feeder?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.feeder?.ready? 'READY':'UNAVAILABLE'}}</span>
+          <span *ngIf="BTP?.feeder?.status !== 'OK'" class="{{BTP?.feeder?.status}}">{{BTP?.feeder?.status}}</span>
+          <br>
+          <h3>
+            <button class="query {{BTP?.dispenser?.pending ?'pending':''}}" (click)="BTP?.dispenser?.query()" [disabled]="BTP?.dispenser?.pending">⟳</button>
+            Dispenser
+          </h3>
+          <span class="{{BTP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}">{{BTP?.dispenser?.ready? 'READY':'UNAVAILABLE'}}</span>
+          <span *ngIf="BTP?.dispenser?.status !== 'OK'" class="{{BTP?.dispenser?.status}}">{{BTP?.dispenser?.status}}</span>
+          <dl>
+            <dt>Environment: <a href="#" (click)="BTP?.getEnvironment()">query</a></dt>
+            <dd *ngFor="let item of btpData.ES | keyvalue">{{item.key}}={{item.value}}</dd>
+            <dt>Logos Loaded:</dt>
+            <dd>{{btpData.LS || 'NONE'}}</dd>
+            <dt>Parametric Tables Loaded:</dt>
+            <dd>{{btpData.PS || 'NONE'}}</dd>
+          </dl>
+          <label for="btp_assets">Assets</label><br>
+          <textarea id="btp_assets" [(ngModel)]="btpData.assets"></textarea><br>
+          <label for="btp_coupon">Coupon</label><br>
+          <input id="btp_coupon" type="text" [(ngModel)]="btpData.coupon" [ngModelOptions]="{standalone: true}"><br>
+          <button (click)="printBagTag()" [disabled]="!cuss2 || cuss2.state !== 'ACTIVE'">Print Bag Tag</button>
+        </details>
+      </section>
+
+      <section id="barcodeReader" *ngIf="barcodeReader">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{barcodeReader?.pending ?'pending':''}}" (click)="barcodeReader?.query()" [disabled]="barcodeReader?.pending">⟳</button>
+              Barcode Reader
+            </h2>
+            <span class="{{barcodeReader?.ready? 'READY':'UNAVAILABLE'}}">{{barcodeReader?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="barcodeReader?.ready" (click)="toggleEnabled(barcodeReader?.id)" [disabled]="barcodeReader?.pending" class="{{barcodeReader?.enabled?'enabled':'disabled'}}">{{barcodeReader?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="barcodeReader?.status !== 'OK'" class="{{barcodeReader?.status}}">{{barcodeReader?.status}}</span>
+          </summary>
+          Data:
+          <div style="border: solid 1px grey;min-height: 1em;padding:3px;">{{barcodeReader?.previousData}}</div>
+          <button *ngIf="barcodeReader?.ready" (click)="barcodeReader?.read(brTimeout)" [disabled]="barcodeReader?.enabled || barcodeReader?.pending">Read</button>
+          <label for="brTimeout"> Timeout: </label><input id="brTimeout" [(ngModel)]="brTimeout" [ngModelOptions]="{standalone: true}">
+        </details>
+      </section>
+
+      <section id="cardReader" *ngIf="cardReader">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{cardReader?.pending ?'pending':''}}" (click)="cardReader?.query()" [disabled]="cardReader?.pending">⟳</button>
+              Card Reader
+            </h2>
+            <span class="{{cardReader?.ready? 'READY':'UNAVAILABLE'}}">{{cardReader?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="cardReader?.ready" (click)="toggleEnabled(cardReader?.id)" [disabled]="cardReader?.pending" class="{{cardReader?.enabled?'enabled':'disabled'}}">{{cardReader?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="cardReader?.status !== 'OK'" class="{{cardReader?.status}}">{{cardReader?.status}}</span>
+          </summary>
+          Data:
+          <div style="border: solid 1px grey;min-height: 1em;padding:3px;">{{cardReader?.previousData}}</div>
+          <button *ngIf="cardReader?.ready" (click)="cardReader?.read(crTimeout)" [disabled]="cardReader?.enabled || cardReader?.pending">Read</button>
+          <button *ngIf="cardReader?.ready" (click)="cardReader?.readPayment(crTimeout)" [disabled]="cardReader?.enabled || cardReader?.pending">Read Payment</button>
+          <label for="crTimeout"> Timeout: </label><input id="crTimeout" [(ngModel)]="crTimeout" [ngModelOptions]="{standalone: true}">
+        </details>
+      </section>
+
+      <section id="documentReader" *ngIf="documentReader">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{documentReader?.pending ?'pending':''}}" (click)="documentReader?.query()" [disabled]="documentReader?.pending">⟳</button>
+              Document Reader
+            </h2>
+            <span class="{{documentReader?.ready? 'READY':'UNAVAILABLE'}}">{{documentReader?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="documentReader?.ready" (click)="toggleEnabled(documentReader?.id)" [disabled]="documentReader?.pending" class="{{documentReader?.enabled?'enabled':'disabled'}}">{{documentReader?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="documentReader?.status !== 'OK'" class="{{documentReader?.status}}">{{documentReader?.status}}</span>
+          </summary>
+          Data:
+          <div style="border: solid 1px grey;min-height: 1em;padding:3px;">{{documentReader?.previousData}}</div>
+          <button *ngIf="documentReader?.ready" (click)="documentReader?.read(drTimeout)" [disabled]="documentReader?.enabled || documentReader?.pending">Read</button>
+          <label for="drTimeout"> Timeout: </label><input id="drTimeout" [(ngModel)]="drTimeout" [ngModelOptions]="{standalone: true}">
+        </details>
+      </section>
+
+      <section id="keypad" *ngIf="keypad">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{keypad?.pending ?'pending':''}}" (click)="keypad?.query()" [disabled]="keypad?.pending">⟳</button>
+              Keypad
+            </h2>
+            <span class="{{keypad?.ready? 'READY':'UNAVAILABLE'}}">{{keypad?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="keypad?.ready" (click)="toggleEnabled(keypad?.id)" [disabled]="keypad?.pending" class="{{keypad?.enabled?'enabled':'disabled'}}">{{keypad?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="keypad?.status !== 'OK'" class="state">{{keypad?.status}}</span>
+          </summary>
+          <span class="key" *ngFor="let key of keys">{{key}}</span>
+        </details>
+      </section>
+
+      <section id="announcement" *ngIf="announcement">
+        <details>
+          <summary>
+            <h2 class="component">
+              <button class="query {{announcement?.pending ?'pending':''}}" (click)="announcement?.query()" [disabled]="announcement?.pending">⟳</button>
+              Announcement
+            </h2>
+            <span class="{{announcement?.ready? 'READY':'UNAVAILABLE'}}">{{announcement?.ready? 'READY':'UNAVAILABLE'}}</span>
+            <button *ngIf="announcement?.ready" (click)="toggleEnabled(announcement?.id)" [disabled]="announcement?.pending" class="{{announcement?.enabled?'enabled':'disabled'}}">{{announcement?.enabled?'ENABLED':'DISABLED'}}</button>
+            <span *ngIf="announcement?.status !== 'OK'" class="state">{{announcement?.status}}</span>
+          </summary>
+          <input  type="text" [(ngModel)]="words" [ngModelOptions]="{standalone: true}"><br>
+          <button *ngIf="announcement?.ready" (click)="announcement?.say(words)" [disabled]="!announcement?.enabled || announcement?.pending">Say it!</button>
+          <button *ngIf="announcement?.ready" (click)="announcement?.pause()" [disabled]="!announcement?.enabled || announcement?.pending">Pause</button>
+          <button *ngIf="announcement?.ready" (click)="announcement?.resume()" [disabled]="!announcement?.enabled || announcement?.pending">Resume</button>
+          <button *ngIf="announcement?.ready" (click)="announcement?.stop()" [disabled]="!announcement?.enabled || announcement?.pending">Stop</button>
+        </details>
+      </section>
+    </section>
+
+    <section id="componentList">
+      <details>
+        <summary>Component List</summary>
+        <table>
+          <tr *ngFor="let component of components">
+            <td>{{ component.id }}</td>
+            <td>{{ component.ready ? '✅' : '🚨' }}</td>
+            <td>{{ component._component.componentDescription }}</td>
+            <td>{{ component.constructor.name }}</td>
+            <td>{{ component.status }}</td>
+            <td>{{ component.ready? 'READY':'UNAVAILABLE' }}</td>
+            <td><button (click)="component.query()">Query</button></td>
+            <td><button (click)="component.enable()">Enable</button></td>
+          </tr>
+        </table>
+        <button (click)="cuss2?.queryComponents()">Query Components</button>
+      </details>
+    </section>
+
+
+    <table id="environment" *ngIf="!!cuss2">
+      <tr><td>cussVersions</td><td>{{ cuss2.environment.cussVersions }}</td></tr>
+      <tr><td>deviceID</td><td>{{ cuss2.environment.deviceID }}</td></tr>
+      <tr><td>initTimeout</td><td>{{ cuss2.environment.initTimeout }}</td></tr>
+      <tr><td>killTimeout</td><td>{{ cuss2.environment.killTimeout }}</td></tr>
+      <tr><td>osName</td><td>{{ cuss2.environment.osName }}</td></tr>
+      <tr><td>osVersion</td><td>{{ cuss2.environment.osVersion }}</td></tr>
+      <tr><td>sessionTimeout</td><td>{{ cuss2.environment.sessionTimeout }}</td></tr>
+    </table>
+  </section>
+
+  <details [open]="!cuss2">
+    <summary><h2>API Connection Details</h2></summary>
+    <ul>
+      <li *ngFor="let item of connectionStatus">{{item}}</li>
+    </ul>
+  </details>
+
+
+</div>
+
+<router-outlet></router-outlet>
