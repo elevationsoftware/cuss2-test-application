@@ -2,7 +2,6 @@
 
 ## Requirements
  - Nodejs 18 or newer
- - Angular 17
  - HTML 5 browser
 
 ## Running locally
